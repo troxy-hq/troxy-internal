@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint HTML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check index.html exists and is non-empty
+        run: |
+          [ -f index.html ] || (echo "index.html missing" && exit 1)
+          SIZE=$(wc -c < index.html)
+          echo "index.html size: ${SIZE} bytes"
+          [ "$SIZE" -gt 1000 ] || (echo "index.html too small" && exit 1)
+          echo "OK"
+
+  # Cloudflare Pages auto-deploys on push to main via git integration.
