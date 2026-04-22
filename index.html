@@ -38,9 +38,7 @@ body { font-family:'DM Sans',sans-serif; font-weight:300; background:var(--bg); 
 
 /* Sidebar */
 .sidebar-header { padding:28px 24px 20px; border-bottom:1px solid var(--border); }
-.logo-lockup { display:flex; align-items:center; gap:10px; line-height:1; }
-.logo-mark { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#0a9e88; }
-.logo-div  { width:1px; background:rgba(0,0,0,0.12); flex-shrink:0; }
+.logo-lockup { display:flex; align-items:baseline; gap:0; line-height:1; }
 .logo-tr   { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#1a2235; }
 .logo-oxy  { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#0a9e88; }
 .sidebar-subtitle { font-size:11px; color:var(--muted); margin-top:4px; letter-spacing:0.06em; text-transform:uppercase; }
@@ -184,12 +182,7 @@ tr:hover td { background:var(--teal-light); }
 <div class="sidebar">
   <div class="sidebar-header">
     <div class="logo-lockup">
-      <span class="logo-mark" style="font-size:22px">t</span>
-      <div class="logo-div" style="height:18px"></div>
-      <span style="display:flex;align-items:baseline;gap:0">
-        <span class="logo-tr" style="font-size:22px">tr</span>
-        <span class="logo-oxy" style="font-size:22px">oxy</span>
-      </span>
+      <span class="logo-tr" style="font-size:22px">tr</span><span class="logo-oxy" style="font-size:22px">oxy</span>
     </div>
     <div class="sidebar-subtitle">Internal Knowledge Base</div>
   </div>
