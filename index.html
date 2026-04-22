@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Fraunces:ital,wght@0,300;0,400;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f5f6f8;
@@ -38,8 +38,11 @@ body { font-family:'DM Sans',sans-serif; font-weight:300; background:var(--bg); 
 
 /* Sidebar */
 .sidebar-header { padding:28px 24px 20px; border-bottom:1px solid var(--border); }
-.sidebar-logo { font-family:'Fraunces',serif; font-size:22px; font-weight:700; }
-.sidebar-logo span { color:var(--teal); }
+.logo-lockup { display:flex; align-items:center; gap:10px; line-height:1; }
+.logo-mark { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#0a9e88; }
+.logo-div  { width:1px; background:rgba(0,0,0,0.12); flex-shrink:0; }
+.logo-tr   { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#1a2235; }
+.logo-oxy  { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-0.04em; color:#0a9e88; }
 .sidebar-subtitle { font-size:11px; color:var(--muted); margin-top:4px; letter-spacing:0.06em; text-transform:uppercase; }
 
 .search-wrap { padding:16px 16px 8px; }
@@ -180,7 +183,14 @@ tr:hover td { background:var(--teal-light); }
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-logo">Tr<span>oxy</span></div>
+    <div class="logo-lockup">
+      <span class="logo-mark" style="font-size:22px">t</span>
+      <div class="logo-div" style="height:18px"></div>
+      <span style="display:flex;align-items:baseline;gap:0">
+        <span class="logo-tr" style="font-size:22px">tr</span>
+        <span class="logo-oxy" style="font-size:22px">oxy</span>
+      </span>
+    </div>
     <div class="sidebar-subtitle">Internal Knowledge Base</div>
   </div>
 
