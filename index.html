@@ -450,80 +450,10 @@ User: approves or declines within 10 min
 
 <hr class="divider">
 
-<!-- 05 AGENTS -->
-<div class="section" id="agents">
-  <div class="section-tag">Product</div>
-  <div class="section-title">What Are AI Agents</div>
-  <div class="section-intro">Understanding the agent landscape is critical for knowing who Troxy's users are and how the product fits in.</div>
-
-  <h2>The Difference Between Chat and Agents</h2>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Regular AI (chat)</div>
-      <p style="margin:0; font-size:13px;">You type → Claude responds → done. No action in the world. Output is text only.</p>
-    </div>
-    <div class="card">
-      <div class="card-title">AI Agent</div>
-      <p style="margin:0; font-size:13px;">Claude is given <strong>tools</strong> — functions it can actually call. It can search the web, send emails, book flights, charge cards. Real actions, real consequences.</p>
-    </div>
-  </div>
-
-  <h2>How Agents Call Tools — MCP</h2>
-  <p><strong>MCP (Model Context Protocol)</strong> is the standard Anthropic created for how AI agents discover and call tools. Think of it like USB — before USB, every device had a different connector. MCP is USB for AI tools.</p>
-  <p>Any service that wants to be usable by agents publishes an MCP server. When an agent is configured to use Stripe's MCP server, it can call <code>create_payment()</code> directly. No human confirmation needed.</p>
-
-  <pre><code><span class="comment"># Agent config (Claude Desktop, Cursor, etc.)</span>
-{
-  <span class="amber">"mcpServers"</span>: {
-    <span class="amber">"stripe"</span>: { <span class="amber">"url"</span>: <span class="green">"https://mcp.stripe.com"</span>, <span class="amber">"apiKey"</span>: <span class="green">"sk_live_..."</span> },
-    <span class="amber">"gmail"</span>:  { <span class="amber">"url"</span>: <span class="green">"https://gmail.mcp.google.com"</span>, <span class="amber">"token"</span>: <span class="green">"ya29..."</span> }
-  }
-}</code></pre>
-
-  <h2>Four Categories of Agents</h2>
-  <table>
-    <tr><th>Category</th><th>Examples</th><th>Troxy relevance</th></tr>
-    <tr>
-      <td><strong>Consumer agents</strong></td>
-      <td>Claude, ChatGPT, Perplexity, Devin, AutoGPT</td>
-      <td>Free tier users, individual consumers</td>
-    </tr>
-    <tr>
-      <td><strong>Developer frameworks</strong></td>
-      <td>LangChain, CrewAI, AutoGen, LlamaIndex</td>
-      <td>Developers building their own agents</td>
-    </tr>
-    <tr>
-      <td><strong>Internal company agents</strong></td>
-      <td>Procurement bots, finance automation, HR agents</td>
-      <td>Biggest enterprise opportunity — run 24/7 with no human watching</td>
-    </tr>
-    <tr>
-      <td><strong>Custom Claude agents</strong></td>
-      <td>Anyone with Claude Projects or API access</td>
-      <td>Zero barrier to create — anyone is a potential user</td>
-    </tr>
-  </table>
-
-  <div class="callout warning">
-    <div class="callout-label">The key insight for sales</div>
-    <p>Internal company agents are the most dangerous and the most underserved. They run 24/7, nobody is watching, and they have real budget access. This is the strongest enterprise pitch.</p>
-  </div>
-
-  <h2>Anyone Can Create an Agent Today</h2>
-  <p>This is important to understand — the barrier to creating an agent is essentially zero. Opening Claude and typing this creates an agent:</p>
-  <pre><code><span class="comment"># This is all it takes to create an agent:</span>
-<span class="green">"You are a travel booking agent. When I ask you to book travel,
-use the Stripe MCP to pay, the Gmail MCP to send confirmations,
-and Google Calendar MCP to add it to my calendar."</span>
-
-<span class="comment"># Claude will now call real tools, with real consequences,
-# every time the user asks it to book something.</span></code></pre>
-</div>
 
 <hr class="divider">
 
-<!-- THE CORE BET -->
+<!-- 05 CORE BET -->
 <div class="section" id="corebet">
   <div class="section-tag">Foundation</div>
   <div class="section-title">The Core Bet</div>
@@ -596,6 +526,79 @@ and Google Calendar MCP to add it to my calendar."</span>
       <tr><td style="padding:9px 12px;">PayPal / Shopify / Square</td><td style="padding:9px 12px;">MCP servers not fully production-ready yet</td><td style="padding:9px 12px;">Add as each provider's MCP server matures — same daemon code, new entry in payment_mcps.go</td></tr>
     </table>
   </div>
+</div>
+
+<hr class="divider">
+
+<!-- 06 AGENTS -->
+<div class="section" id="agents">
+  <div class="section-tag">Product</div>
+  <div class="section-title">What Are AI Agents</div>
+  <div class="section-intro">Understanding the agent landscape is critical for knowing who Troxy's users are and how the product fits in.</div>
+
+  <h2>The Difference Between Chat and Agents</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Regular AI (chat)</div>
+      <p style="margin:0; font-size:13px;">You type → Claude responds → done. No action in the world. Output is text only.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">AI Agent</div>
+      <p style="margin:0; font-size:13px;">Claude is given <strong>tools</strong> — functions it can actually call. It can search the web, send emails, book flights, charge cards. Real actions, real consequences.</p>
+    </div>
+  </div>
+
+  <h2>How Agents Call Tools — MCP</h2>
+  <p><strong>MCP (Model Context Protocol)</strong> is the standard Anthropic created for how AI agents discover and call tools. Think of it like USB — before USB, every device had a different connector. MCP is USB for AI tools.</p>
+  <p>Any service that wants to be usable by agents publishes an MCP server. When an agent is configured to use Stripe's MCP server, it can call <code>create_payment()</code> directly. No human confirmation needed.</p>
+
+  <pre><code><span class="comment"># Agent config (Claude Desktop, Cursor, etc.)</span>
+{
+  <span class="amber">"mcpServers"</span>: {
+    <span class="amber">"stripe"</span>: { <span class="amber">"url"</span>: <span class="green">"https://mcp.stripe.com"</span>, <span class="amber">"apiKey"</span>: <span class="green">"sk_live_..."</span> },
+    <span class="amber">"gmail"</span>:  { <span class="amber">"url"</span>: <span class="green">"https://gmail.mcp.google.com"</span>, <span class="amber">"token"</span>: <span class="green">"ya29..."</span> }
+  }
+}</code></pre>
+
+  <h2>Four Categories of Agents</h2>
+  <table>
+    <tr><th>Category</th><th>Examples</th><th>Troxy relevance</th></tr>
+    <tr>
+      <td><strong>Consumer agents</strong></td>
+      <td>Claude, ChatGPT, Perplexity, Devin, AutoGPT</td>
+      <td>Free tier users, individual consumers</td>
+    </tr>
+    <tr>
+      <td><strong>Developer frameworks</strong></td>
+      <td>LangChain, CrewAI, AutoGen, LlamaIndex</td>
+      <td>Developers building their own agents</td>
+    </tr>
+    <tr>
+      <td><strong>Internal company agents</strong></td>
+      <td>Procurement bots, finance automation, HR agents</td>
+      <td>Biggest enterprise opportunity — run 24/7 with no human watching</td>
+    </tr>
+    <tr>
+      <td><strong>Custom Claude agents</strong></td>
+      <td>Anyone with Claude Projects or API access</td>
+      <td>Zero barrier to create — anyone is a potential user</td>
+    </tr>
+  </table>
+
+  <div class="callout warning">
+    <div class="callout-label">The key insight for sales</div>
+    <p>Internal company agents are the most dangerous and the most underserved. They run 24/7, nobody is watching, and they have real budget access. This is the strongest enterprise pitch.</p>
+  </div>
+
+  <h2>Anyone Can Create an Agent Today</h2>
+  <p>This is important to understand — the barrier to creating an agent is essentially zero. Opening Claude and typing this creates an agent:</p>
+  <pre><code><span class="comment"># This is all it takes to create an agent:</span>
+<span class="green">"You are a travel booking agent. When I ask you to book travel,
+use the Stripe MCP to pay, the Gmail MCP to send confirmations,
+and Google Calendar MCP to add it to my calendar."</span>
+
+<span class="comment"># Claude will now call real tools, with real consequences,
+# every time the user asks it to book something.</span></code></pre>
 </div>
 <div class="section" id="howworks">
   <div class="section-tag">Product</div>
