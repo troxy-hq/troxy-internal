@@ -4033,7 +4033,7 @@ var merchantCategories = map[string]string{
 <div class="section" id="aipolicies">
   <div class="section-tag">Technical</div>
   <div class="section-title">AI Policy Creator</div>
-  <div class="section-intro">Instead of building policies with dropdowns, the user types in plain English what they want — and Claude converts it to a structured policy automatically. This is a V2 feature, but it's already planned and the architecture supports it.</div>
+  <div class="section-intro">Live in production. Users type what they want in plain English — Claude converts it to a structured policy, which renders in the visual rule builder for review before saving. The entire structured policy engine runs underneath; AI is just a smarter input method.</div>
 
   <div class="callout">
     <div class="callout-label">Why this matters</div>
@@ -4043,66 +4043,35 @@ var merchantCategories = map[string]string{
   <h2>The flow</h2>
   <div class="card">
     <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;"><span style="color:#68d391;"># User types in the policy input box:</span>
-"Block electronics and entertainment purchases over $100,
- unless it's before 6pm on a weekday"
+"Block Amazon over $200 on weekends, notify me otherwise"
 
-<span style="color:#68d391;"># Claude API converts this to structured conditions:</span>
+<span style="color:#68d391;"># POST /dashboard/ai-policy → Claude (Haiku) returns structured JSON:</span>
 {
-  "name": "Block high-value leisure purchases",
-  "conditions": [
-    { "field": "category",    "operator": "eq",  "value": "electronics" },  ← OR
-    { "field": "category",    "operator": "eq",  "value": "entertainment" },
-    { "field": "amount",      "operator": "gt",  "value": 100 },
-    { "field": "hour",        "operator": "gt",  "value": 18 },             ← OR
-    { "field": "day_of_week", "operator": "in",  "value": ["Saturday","Sunday"] }
+  "name": "Amazon weekend block",
+  "conditions": [],
+  "or_conditions": [
+    { "conditions": [{"field":"merchant_name","operator":"eq","value":"amazon"},
+                     {"field":"day_of_week","operator":"eq","value":"Saturday"}], "action": "BLOCK" },
+    { "conditions": [{"field":"merchant_name","operator":"eq","value":"amazon"},
+                     {"field":"amount","operator":"gt","value":"200"}],           "action": "NOTIFY" }
   ],
-  "action": "BLOCK"
+  "action": "ALLOW"
 }
 
 <span style="color:#68d391;"># Dashboard renders it in the visual rule builder
-# User can review, tweak, and confirm
-# Policy is saved exactly like a manually-created one</span></pre>
+# User can review, tweak, then click "Create policy"
+# Saved to DB with source='ai' for analytics tracking</span></pre>
   </div>
 
-  <h2>Implementation plan (V2)</h2>
+  <h2>Rate limiting</h2>
   <div class="card">
     <table style="width:100%;border-collapse:collapse;font-size:13px;">
-      <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Step</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">What</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Notes</th></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">1</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Add text input to Policies page</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">"Describe your policy in plain English..." textarea with "Generate" button</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">2</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Call Claude API from core-handler</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">POST /dashboard/policies/generate → passes text to Claude with structured JSON schema prompt</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">3</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Claude returns structured policy JSON</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Use tool_use / JSON mode to guarantee parseable output. Schema matches existing conditions format.</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">4</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Dashboard renders in visual builder</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">User sees the generated policy in the same multi-condition UI. Can edit before saving.</td></tr>
-      <tr><td style="padding:9px 12px;">5</td><td style="padding:9px 12px;">User confirms → saved to RDS</td><td style="padding:9px 12px;">Identical to manually-created policy. AI-generated policies get a ✨ badge in the list.</td></tr>
+      <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Parameter</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Value</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Notes</th></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Daily limit</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><strong>20 per user</strong></td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Hard limit — returns error with "rate_limited: true" flag when exceeded</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Reset time</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Midnight (server time)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Uses <code>CURRENT_DATE</code> in PostgreSQL — resets at 00:00 UTC</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Tracked in</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>ai_policy_usage</code> table</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">One row per (user_id, date); incremented atomically on each request</td></tr>
+      <tr><td style="padding:9px 12px;">Applies to</td><td style="padding:9px 12px;">Generate + conflict check</td><td style="padding:9px 12px;">Both <code>POST /dashboard/ai-policy</code> and <code>/dashboard/ai-policy/check</code> share the same counter</td></tr>
     </table>
-  </div>
-
-  <h2>Prompt for Claude Code to implement (V2)</h2>
-  <div class="card">
-    <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;"><span style="color:#64748b;">// System prompt for policy generation:</span>
-You are a payment policy assistant for Troxy, an AI agent payment control platform.
-Convert the user's plain English policy description into a structured JSON policy object.
-
-The policy must use only these fields:
-- amount ($): operators: lt, lte, gt, gte, eq, between
-- amount_pct (% of budget): operators: gt, gte, lt, lte
-- category: values: electronics, grocery, travel, lodging, saas, restaurant, entertainment, gas, pharmacy, clothing, health, education, government, other
-- merchant_name: operators: eq, contains, starts_with, not_contains
-- agent_name: operators: eq, neq, any
-- hour (0-23): operators: lt, gt, between
-- day_of_week: values: Monday-Sunday
-- tx_per_hour: operators: gt, gte
-- tx_per_day: operators: gt, gte
-- currency: values: USD, EUR, GBP, ILS, JPY, CAD, AUD
-- merchant_country: operators: eq, neq
-
-Action must be: ALLOW, BLOCK, ESCALATE, or NOTIFY.
-
-Return ONLY valid JSON matching this schema:
-{
-  "name": "string",
-  "conditions": [{"field": "string", "operator": "string", "value": "string", "value2": "string|null"}],
-  "action": "ALLOW|BLOCK|ESCALATE|NOTIFY"
-}</pre>
   </div>
 
   <div class="callout">
