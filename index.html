@@ -211,7 +211,7 @@ tr:hover td { background:var(--teal-light); }
 
   <div class="nav-section">
     <div class="nav-section-label">Technical</div>
-    <a class="nav-link" href="#architecture">10 — Architecture</a>
+    <a class="nav-link" href="#architecture">10 — Architecture (MVP + Prod)</a>
     <a class="nav-link" href="#mvpscope">11 — MVP Product Scope</a>
     <a class="nav-link" href="#installation">12 — Installation</a>
     <a class="nav-link" href="#backend">13 — Backend & Hosting</a>
@@ -239,6 +239,7 @@ tr:hover td { background:var(--teal-light); }
     <a class="nav-link" href="#uiux">35 — UI/UX Guidelines</a>
     <a class="nav-link" href="#setupchecklist">36 — Setup Checklist</a>
     <a class="nav-link" href="#aipolicies">37 — AI Policy Creator</a>
+    <a class="nav-link" href="#notifications">37 — Notifications &amp; Support</a>
     <a class="nav-link" href="#currentstate">38 — Current State (Apr 2026)</a>
     <a class="nav-link" href="#cicd">39 — CI/CD Pipelines</a>
     <a class="nav-link" href="#openquestion">40 — The Open Question</a>
@@ -845,25 +846,150 @@ THEN [Allow automatically]</pre>
     <p style="font-size:13px; margin-bottom:0;">Node.js package published to npm. Patches MCP config files for Claude Desktop / Cursor / Windsurf to add Troxy's <code>evaluate_payment</code> tool. Also exposes management commands. No Go daemon, no background binary.</p>
   </div>
 
-  <h2>Actual AWS Infrastructure</h2>
-  <pre><code>Cloudflare (DNS for troxy.io — ALL domains)
-    ↓
-API Gateway (HTTP)
-    ↓
-Lambda — troxy-mvp-core-handler (Python 3.12)
-    ↓
-RDS PostgreSQL (db.t4g.micro, us-east-1)
-AWS SES (email — magic links + approval emails)
-EventBridge (daily budget reset cron)
-Secrets Manager (DB password + app secrets)</code></pre>
+  <h2>MVP Architecture Diagram</h2>
+  <p style="font-size:13px;color:#4a5568;margin-bottom:12px;">What is actually running today. Lambda is deliberately outside the VPC to eliminate the $32/month NAT Gateway cost — see trade-off notes in the diagram.</p>
+
+  <figure style="margin:0 0 24px;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 385" style="width:100%;max-width:760px;border-radius:12px;border:1px solid #e2e8f0;background:#f9fafb;">
+    <defs>
+      <marker id="a1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#475569"/></marker>
+      <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#94a3b8"/></marker>
+    </defs>
+    <!-- Cloudflare bar -->
+    <rect x="1" y="1" width="758" height="52" rx="11" fill="#f0fdf9" stroke="#0a9e88" stroke-width="1.5"/>
+    <rect x="1" y="40" width="758" height="13" rx="0" fill="#f0fdf9"/>
+    <text x="20" y="20" font-family="DM Sans,system-ui,sans-serif" font-size="10" font-weight="700" letter-spacing="1.5" fill="#0a9e88">CLOUDFLARE</text>
+    <text x="20" y="38" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#0a9e88">DNS: all troxy.io domains  ·  Pages: dash.troxy.io  ·  troxy.io  ·  admin.troxy.io  ·  internal.troxy.io</text>
+    <!-- Arrow CF → AWS -->
+    <line x1="258" y1="53" x2="258" y2="76" stroke="#475569" stroke-width="1.5" marker-end="url(#a1)"/>
+    <text x="267" y="70" font-family="DM Sans,system-ui,sans-serif" font-size="9" fill="#64748b">api.troxy.io</text>
+    <!-- AWS region box -->
+    <rect x="10" y="76" width="740" height="297" rx="10" fill="white" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="24" y="93" font-family="DM Sans,system-ui,sans-serif" font-size="9" fill="#94a3b8" letter-spacing="1">AWS  us-east-1</text>
+    <!-- API Gateway -->
+    <rect x="24" y="100" width="118" height="44" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="83" y="120" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">API Gateway</text>
+    <text x="83" y="135" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">HTTP API</text>
+    <!-- Arrow API GW → Lambda -->
+    <line x1="142" y1="122" x2="175" y2="122" stroke="#475569" stroke-width="1.5" marker-end="url(#a1)"/>
+    <!-- Lambda -->
+    <rect x="175" y="95" width="212" height="62" rx="6" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="281" y="116" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#78350f">Lambda  Python 3.12</text>
+    <text x="281" y="131" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">troxy-mvp-core-handler</text>
+    <text x="281" y="148" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#d97706">⚠ outside VPC  (saves NAT ~$32/mo)</text>
+    <!-- Arrow Lambda → RDS -->
+    <line x1="281" y1="157" x2="281" y2="178" stroke="#475569" stroke-width="1.5" marker-end="url(#a1)"/>
+    <!-- RDS -->
+    <rect x="175" y="178" width="212" height="56" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="281" y="199" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#be123c">RDS PostgreSQL</text>
+    <text x="281" y="214" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">db.t4g.micro  ·  Single-AZ  ·  us-east-1</text>
+    <text x="281" y="228" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#f43f5e">publicly_accessible=true  ⚠  MVP only</text>
+    <!-- Secrets Manager -->
+    <rect x="430" y="100" width="150" height="44" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="505" y="119" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">Secrets Manager</text>
+    <text x="505" y="134" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">DB password + app secrets</text>
+    <!-- SES -->
+    <rect x="430" y="158" width="150" height="50" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="505" y="177" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#15803d">AWS SES</text>
+    <text x="505" y="191" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Magic links + approval emails</text>
+    <text x="505" y="203" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#d97706">⏳ production access pending</text>
+    <!-- EventBridge -->
+    <rect x="430" y="222" width="150" height="44" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+    <text x="505" y="242" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#c2410c">EventBridge</text>
+    <text x="505" y="257" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Daily budget reset cron</text>
+    <!-- Dashed lines Lambda → right services -->
+    <line x1="387" y1="112" x2="430" y2="118" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a2)"/>
+    <line x1="387" y1="119" x2="430" y2="176" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a2)"/>
+    <line x1="387" y1="126" x2="430" y2="242" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a2)"/>
+    <!-- Cost badge -->
+    <rect x="606" y="100" width="128" height="44" rx="6" fill="#f0fdf9" stroke="#0a9e88" stroke-width="1.5"/>
+    <text x="670" y="120" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="15" font-weight="700" fill="#0a9e88">~$22/mo</text>
+    <text x="670" y="135" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">total infra cost</text>
+    <!-- Trade-off note -->
+    <rect x="24" y="252" width="726" height="108" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1"/>
+    <text x="40" y="271" font-family="DM Sans,system-ui,sans-serif" font-size="10" font-weight="700" fill="#92400e">MVP TRADE-OFFS — Acceptable now, must fix before first external user</text>
+    <text x="40" y="289" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#78350f">1.  Lambda outside VPC removes the need for NAT Gateway, saving ~$32/month. Side effect: RDS must be publicly_accessible=true.</text>
+    <text x="40" y="305" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#78350f">2.  RDS publicly_accessible=true is mitigated by: strong password in Secrets Manager, SSL enforced (sslmode=require), port 5432 ≠ HTTP.</text>
+    <text x="40" y="321" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#78350f">3.  No Multi-AZ RDS (single point of failure). Acceptable for 2 internal users. Not acceptable for paying customers.</text>
+    <text x="40" y="341" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#0a9e88">→  Fix before first real user: Lambda → VPC private subnet, RDS publicly_accessible=false, SG: allow 5432 from Lambda SG only.</text>
+  </svg>
+  </figure>
+
+  <h2>Production Architecture Diagram</h2>
+  <p style="font-size:13px;color:#4a5568;margin-bottom:12px;">Target state before first external user. Estimated ~2-3 hours of infrastructure work. Longest lead time: SES production approval (24-48h from AWS — submit first).</p>
+
+  <figure style="margin:0 0 24px;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" style="width:100%;max-width:760px;border-radius:12px;border:1px solid #e2e8f0;background:#f9fafb;">
+    <defs>
+      <marker id="b1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#475569"/></marker>
+      <marker id="b2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#94a3b8"/></marker>
+    </defs>
+    <!-- Cloudflare bar -->
+    <rect x="1" y="1" width="758" height="52" rx="11" fill="#f0fdf9" stroke="#0a9e88" stroke-width="1.5"/>
+    <rect x="1" y="40" width="758" height="13" fill="#f0fdf9"/>
+    <text x="20" y="20" font-family="DM Sans,system-ui,sans-serif" font-size="10" font-weight="700" letter-spacing="1.5" fill="#0a9e88">CLOUDFLARE</text>
+    <text x="20" y="38" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#0a9e88">DNS: all troxy.io domains  ·  Pages: dash.troxy.io  ·  troxy.io  ·  admin.troxy.io  ·  internal.troxy.io</text>
+    <!-- Arrow down -->
+    <line x1="196" y1="53" x2="196" y2="76" stroke="#475569" stroke-width="1.5" marker-end="url(#b1)"/>
+    <text x="205" y="70" font-family="DM Sans,system-ui,sans-serif" font-size="9" fill="#64748b">api.troxy.io</text>
+    <!-- AWS region -->
+    <rect x="10" y="76" width="740" height="344" rx="10" fill="white" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="24" y="93" font-family="DM Sans,system-ui,sans-serif" font-size="9" fill="#94a3b8" letter-spacing="1">AWS  us-east-1</text>
+    <!-- API Gateway (outside VPC) -->
+    <rect x="24" y="100" width="118" height="44" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="83" y="119" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">API Gateway</text>
+    <text x="83" y="134" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">HTTP API  ·  outside VPC</text>
+    <!-- Arrow API GW → Lambda (diagonal into VPC) -->
+    <line x1="142" y1="120" x2="185" y2="158" stroke="#475569" stroke-width="1.5" marker-end="url(#b1)"/>
+    <!-- VPC box -->
+    <rect x="166" y="148" width="468" height="256" rx="8" fill="#f0f9ff" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="182" y="164" font-family="DM Sans,system-ui,sans-serif" font-size="9" font-weight="600" fill="#0369a1" letter-spacing="0.5">VPC  —  private subnets only</text>
+    <!-- Lambda (inside VPC) -->
+    <rect x="180" y="172" width="204" height="62" rx="6" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="282" y="193" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#78350f">Lambda  Python 3.12</text>
+    <text x="282" y="208" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">troxy-mvp-core-handler</text>
+    <text x="282" y="224" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#16a34a">✓ private subnet  ·  SG: lambda-sg</text>
+    <!-- Arrow Lambda → RDS -->
+    <line x1="384" y1="202" x2="422" y2="202" stroke="#475569" stroke-width="1.5" marker-end="url(#b1)"/>
+    <!-- RDS (private, no public endpoint) -->
+    <rect x="422" y="168" width="200" height="76" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="522" y="189" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="11" font-weight="600" fill="#be123c">RDS PostgreSQL</text>
+    <text x="522" y="204" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Multi-AZ  ·  private subnets</text>
+    <text x="522" y="218" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#16a34a">✓ publicly_accessible=false</text>
+    <text x="522" y="232" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#16a34a">SG: allow 5432 from lambda-sg only</text>
+    <!-- NAT Gateway (for Anthropic API) -->
+    <rect x="180" y="254" width="204" height="44" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+    <text x="282" y="274" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#c2410c">NAT Gateway</text>
+    <text x="282" y="289" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Outbound only — Anthropic API</text>
+    <!-- VPC Endpoints -->
+    <rect x="422" y="260" width="200" height="50" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="522" y="279" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">VPC Endpoints</text>
+    <text x="522" y="294" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Secrets Manager  ·  SES</text>
+    <text x="522" y="308" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">no public internet for AWS calls</text>
+    <!-- Arrows Lambda → NAT and VPC Endpoints -->
+    <line x1="282" y1="234" x2="282" y2="254" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#b2)"/>
+    <line x1="360" y1="224" x2="422" y2="278" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#b2)"/>
+    <!-- Cost badge -->
+    <rect x="20" y="340" width="128" height="50" rx="6" fill="#f0fdf9" stroke="#0a9e88" stroke-width="1.5"/>
+    <text x="84" y="362" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="14" font-weight="700" fill="#0a9e88">~$60-80/mo</text>
+    <text x="84" y="377" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">estimated prod cost</text>
+    <!-- Hardening summary -->
+    <rect x="158" y="340" width="582" height="70" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+    <text x="174" y="360" font-family="DM Sans,system-ui,sans-serif" font-size="10" font-weight="700" fill="#15803d">CHANGES vs MVP</text>
+    <text x="174" y="378" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#166534">✓ Lambda in VPC private subnet  ·  ✓ RDS no public endpoint  ·  ✓ SG: port 5432 from lambda-sg only  ·  ✓ Multi-AZ RDS</text>
+    <text x="174" y="394" font-family="DM Sans,system-ui,sans-serif" font-size="9.5" fill="#166534">✓ VPC Endpoints for Secrets Manager + SES  ·  ✓ NAT only for Anthropic API  ·  ✓ SES production access  ·  ✓ deletion_protection=true</text>
+    <text x="174" y="408" font-family="DM Sans,system-ui,sans-serif" font-size="9" fill="#4ade80">Estimated 2-3 hours to migrate. Critical pre-req: submit SES production request (24-48h AWS review — do it first).</text>
+  </svg>
+  </figure>
 
   <h2>URL Structure (actual)</h2>
   <table>
     <tr><th>Subdomain</th><th>Purpose</th><th>Hosting</th></tr>
-    <tr><td><code>troxy.io</code></td><td>Marketing site</td><td>Cloudflare Pages</td></tr>
+    <tr><td><code>troxy.io</code></td><td>Marketing + docs site</td><td>Cloudflare Pages (troxy-main repo, worker)</td></tr>
     <tr><td><code>dash.troxy.io</code></td><td>User dashboard (production)</td><td>Cloudflare Pages (troxy-dashboard repo, main branch)</td></tr>
     <tr><td><code>dev.dash.troxy.io</code></td><td>Staging dashboard</td><td>Cloudflare Pages (troxy-dashboard repo, dev branch)</td></tr>
-    <tr><td><code>internal.troxy.io</code></td><td>This knowledge base</td><td>Cloudflare Pages (troxy-sites repo)</td></tr>
+    <tr><td><code>admin.troxy.io</code></td><td>Internal admin metrics</td><td>Cloudflare Pages (troxy-admin repo, main branch)</td></tr>
+    <tr><td><code>internal.troxy.io</code></td><td>This knowledge base</td><td>Cloudflare Pages (troxy-internal repo)</td></tr>
     <tr><td><code>api.troxy.io</code></td><td>Backend REST API</td><td>AWS Lambda + API Gateway</td></tr>
   </table>
 
@@ -4086,8 +4212,9 @@ View your full activity log: https://dash.troxy.io/activity
   <h2>Full onboarding flow — step by step</h2>
   <div class="card">
     <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;"><span style="color:#68d391;">Step 1 — Sign up</span>
-User visits dashboard.troxy.io → enters email → clicks "Send magic link"
-→ AWS SES sends link → user clicks → JWT session created → logged in
+User visits dash.troxy.io → enters email → SES sends email with 8-char sign-in code
+→ User enters code in XXXX-XXXX format → JWT session created → logged in
+(Works identically from CLI: npx troxy login → same email + code flow)
 
 <span style="color:#68d391;">Step 2 — Generate API key</span>
 Dashboard shows empty state: "Generate your first API key"
@@ -4602,6 +4729,59 @@ code, pre, .mono {
 
 <hr class="divider">
 
+<!-- NOTIFICATIONS & SUPPORT -->
+<div class="section" id="notifications">
+  <div class="section-tag">Operations</div>
+  <div class="section-title">Notifications &amp; Support</div>
+  <div class="section-intro">How to push changelog updates to users, how support conversations work, and what the notification bell system shows.</div>
+
+  <h2>Dashboard Notification Bell</h2>
+  <p>The bell icon in the sidebar shows a dot when there are unread items. Four sources:</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Changelog / What's New</div>
+      <p style="font-size:13px;margin:0;">Stored in <code>changelog.json</code> in the root of <code>troxy-dashboard</code> repo. To push a new notification: add an entry at the TOP of the array and push to git. Cloudflare Pages deploys automatically. The dot shows unread for any user whose <code>troxy_notif_seen</code> localStorage key doesn't match the first entry's title.</p>
+      <pre style="margin-top:12px;background:#1a2235;color:#e2e8f0;padding:12px;border-radius:6px;font-size:11px;line-height:1.6;">{ "title": "Feature name",
+  "sub": "Short description — Apr 23" }</pre>
+    </div>
+    <div class="card">
+      <div class="card-title">Dynamic Alerts (computed client-side)</div>
+      <p style="font-size:13px;margin:0;">Computed from loaded data — no backend changes needed:</p>
+      <ul style="font-size:12px;color:#4a5568;padding-left:16px;margin-top:8px;">
+        <li style="margin-bottom:4px;">Budget warnings: cards at ≥80% (yellow) or ≥90% (red)</li>
+        <li style="margin-bottom:4px;">Policy escalation nudge: 3+ ESCALATE in last 7 days</li>
+        <li style="margin-bottom:4px;">Block rate nudge: 5+ BLOCK in last 7 days</li>
+        <li style="margin-bottom:4px;">Pending approvals: links to overview page</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-label">Reserved label</div>
+    <p>The "Insights" tab label in the notification panel is <strong>intentionally reserved</strong> for a future AI spending analysis feature. Do not use "Insights" as a section label inside the bell panel.</p>
+  </div>
+
+  <h2>Support Chat (Crisp)</h2>
+  <div class="card">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Step</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Action</th></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Setup (one-time)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Sign up at crisp.chat → create workspace → get Website ID → replace <code>YOUR_CRISP_WEBSITE_ID</code> in <code>index.html</code> → push</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Responding</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Go to app.crisp.chat → all conversations listed → reply directly → user sees reply in chat widget on dash.troxy.io</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Notification</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">When a Crisp reply arrives, the user's notification bell shows a dot: "New reply from support"</td></tr>
+      <tr><td style="padding:9px 12px;font-weight:500;">Fallback</td><td style="padding:9px 12px;">If Crisp fails to load, support button falls back to <code>mailto:support@troxy.io</code>. User email is auto-prefilled in Crisp from their Troxy login.</td></tr>
+    </table>
+  </div>
+
+  <h2>Per-Policy Notification Recipients (Deferred)</h2>
+  <div class="callout warning">
+    <div class="callout-label">Blocked on SES production access</div>
+    <p>Plan: add <code>notify_emails</code> JSONB column to policies. Let users route NOTIFY/ESCALATE alerts to different teammates per policy (e.g. finance team for large purchases). Currently blocked — AWS SES sandbox only allows sending to verified addresses. Once SES production is approved, this becomes a 1-day implementation.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
 <!-- 37 CURRENT STATE -->
 <div class="section" id="currentstate">
   <div class="section-tag">38 — Current State</div>
@@ -4624,22 +4804,27 @@ code, pre, .mono {
       <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Policy engine (<code>/evaluate</code>)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">ALLOW/BLOCK/ESCALATE/NOTIFY. decision_source tracking. Tested end-to-end.</td></tr>
       <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">ESCALATE email approval</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">One-click approve/decline links. 10-min expiry. Works in SES sandbox (verified emails).</td></tr>
       <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">CLI (<code>npx troxy</code>)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Published</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Node.js — patches MCP configs, exposes <code>evaluate_payment</code> tool. v0.1.9 on npm.</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Magic link auth</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">SES sandbox mode. Works for verified emails only.</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Reports page</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Date range, CSV export</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">AI policy builder</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Rate-limited. Validates card names against user's card list.</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Per-card default action</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Each card alias has configurable default_action (ALLOW/BLOCK/ESCALATE)</td></tr>
-      <tr><td style="padding:9px 12px;font-weight:500;">AWS SES production</td><td style="padding:9px 12px;color:#854f0b;font-weight:500;">⏳ Pending</td><td style="padding:9px 12px;">Request submitted to AWS. Waiting for approval. Blocker for emails to unverified addresses.</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Code-only sign-in auth</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Email → 8-char code (XXXX-XXXX format). Works for UI and CLI. SES sandbox — verified emails only.</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Reports page</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Date range, card/decision filters, CSV export</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">AI policy builder</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Claude-powered. Rate-limited. Returns card_ids, validates card names against user's list.</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Per-card default action</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Each card alias: configurable default_action (ALLOW/BLOCK/ESCALATE), clickable toggle in Cards tab</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Notification bell</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Dashboard sidebar bell. Shows changelog, budget alerts, pending approvals, Crisp support replies.</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Admin panel</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:#0f6e56;font-weight:500;">✅ Live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">admin.troxy.io — restricted to gaslan@troxy.io + ykadmon@troxy.io. User metrics, user filter selector.</td></tr>
+      <tr><td style="padding:9px 12px;font-weight:500;">AWS SES production</td><td style="padding:9px 12px;color:#854f0b;font-weight:500;">⏳ Pending</td><td style="padding:9px 12px;">Blocker for emails to unverified addresses (new user signups). Submit AWS request first — 24-48h review.</td></tr>
     </table>
   </div>
 
   <h2>Repos</h2>
   <div class="card">
     <table style="width:100%;border-collapse:collapse;font-size:13px;">
-      <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Repo</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">What it contains</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">CI</th></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-tf-live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Terragrunt live config. Lambda source code at <code>src/core-handler/</code>. Dashboard at <code>files/dashboard/</code>.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Targeted Terragrunt apply (only changed modules) + Lambda deploy</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-tf-modules</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Reusable Terraform modules (networking, RDS, Lambda, etc.)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>terraform fmt</code> + <code>terraform validate</code> per module</td></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-dashboard</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Single-page dashboard app (<code>index.html</code> + <code>_redirects</code>)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Auto-deploy to Cloudflare Pages on push to main</td></tr>
-      <tr><td style="padding:9px 12px;font-weight:500;">troxy-hq/troxy-cli</td><td style="padding:9px 12px;">Node.js CLI — <code>npx troxy init</code>, MCP server, management commands</td><td style="padding:9px 12px;">Test on Node 18/20/22, publish to npm on version tag</td></tr>
+      <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Repo</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">What it contains</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Deploys to</th></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-tf-live</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Terragrunt live config. Lambda source at <code>src/core-handler/</code>. Targeted apply on push — only changed modules.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">AWS (Lambda + RDS + API GW + monitoring)</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-tf-modules</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Reusable Terraform modules: networking, RDS, Lambda, API GW, monitoring</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>terraform fmt</code> + <code>validate</code> on PR</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-dashboard</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Single-page user dashboard (<code>index.html</code>). Two branches: main → prod, dev → staging.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Cloudflare Pages: dash.troxy.io / dev.dash.troxy.io</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-admin</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Internal admin panel. Metrics, user management. Restricted to gaslan@troxy.io + ykadmon@troxy.io.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Cloudflare Pages: admin.troxy.io</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-main</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Marketing + docs Cloudflare Worker. Handles troxy.io, /docs, /terms, /privacy, /favicon.svg. Brand assets in <code>brand/</code>.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Cloudflare Workers: troxy.io</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">troxy-hq/troxy-internal</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">This knowledge base (<code>index.html</code>). Deployed via Cloudflare Pages git integration — no secrets needed.</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Cloudflare Pages: internal.troxy.io</td></tr>
+      <tr><td style="padding:9px 12px;font-weight:500;">troxy-hq/troxy-cli</td><td style="padding:9px 12px;">Node.js CLI — <code>npx troxy init</code>, MCP server, management commands. Published to npm.</td><td style="padding:9px 12px;">npm: troxy (v0.1.9)</td></tr>
     </table>
   </div>
 </div>
@@ -4694,10 +4879,34 @@ git checkout main && git merge dev && git push
 <span class="comment"># → deploys to dash.troxy.io (production)</span></code></pre>
 
   <h2>troxy-tf-modules — Validate</h2>
-  <p>On every push/PR: <code>terraform fmt -check</code> across all modules, then <code>terraform validate</code> per module (no AWS credentials needed — uses <code>-backend=false</code>).</p>
+  <p>On every push/PR: <code>terraform fmt -check</code> across all modules, then <code>terraform validate</code> per module (no AWS credentials needed — uses <code>-backend=false</code>). Also runs Checkov security scan and Bandit on Lambda Python source.</p>
 
   <h2>troxy-cli — Test + Publish</h2>
   <p>On push/PR: tests run on Node 18, 20, 22. On a version tag push (<code>git tag v0.1.0 &amp;&amp; git push --tags</code>): publishes to npm automatically using <code>NPM_TOKEN</code> secret.</p>
+
+  <h2>troxy-main — Worker Deploy</h2>
+  <p>On push to <code>main</code>: lints worker.js (size check &gt;1KB), then deploys to Cloudflare Workers via <code>wrangler deploy</code> using <code>CLOUDFLARE_API_TOKEN</code> + account ID.</p>
+
+  <h2>troxy-admin — HTML Lint</h2>
+  <p>On push/PR: checks that <code>index.html</code> exists and is non-empty. Cloudflare Pages deploys automatically via git integration (no secrets needed).</p>
+
+  <h2>troxy-internal — HTML Lint</h2>
+  <p>On push/PR: checks that <code>index.html</code> exists and is non-empty. Cloudflare Pages deploys automatically via git integration.</p>
+
+  <h2>troxy-dashboard — Cloudflare Pages (full)</h2>
+  <p>Uses Cloudflare Pages git integration — push to <code>main</code> or <code>dev</code> triggers auto-deploy. No GitHub Actions secrets needed for the dashboard.</p>
+
+  <h2>All Repos — CI Secrets Reference</h2>
+  <table>
+    <tr><th>Secret</th><th>Used by</th><th>Purpose</th></tr>
+    <tr><td><code>AWS_ROLE_ARN</code></td><td>troxy-tf-live</td><td>OIDC role for GitHub Actions → AWS. No long-lived keys.</td></tr>
+    <tr><td><code>CLOUDFLARE_API_TOKEN</code></td><td>troxy-main</td><td>Wrangler deploy for troxy.io worker</td></tr>
+    <tr><td><code>NPM_TOKEN</code></td><td>troxy-cli</td><td>Publish to npm on version tag</td></tr>
+  </table>
+  <div class="callout">
+    <div class="callout-label">Cloudflare Pages repos</div>
+    <p>troxy-dashboard, troxy-admin, and troxy-internal deploy via Cloudflare Pages git integration — no secrets or GitHub Actions needed. Cloudflare watches the repo and deploys on every push to main.</p>
+  </div>
 </div>
 
 <hr class="divider">
