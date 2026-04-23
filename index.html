@@ -24,17 +24,17 @@
   --sidebar-w: 280px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { overflow-x: hidden; }
 body { font-family:'DM Sans',sans-serif; font-weight:300; background:var(--bg); color:var(--text); line-height:1.7; }
 
 /* Layout */
+.layout { display:flex; align-items:flex-start; }
 .sidebar {
-  width:var(--sidebar-w); position:fixed; top:0; left:0; height:100vh;
+  width:var(--sidebar-w); flex-shrink:0; position:sticky; top:0; height:100vh;
   background:var(--surface); border-right:1px solid var(--border);
   overflow-y:auto; z-index:100;
   display:flex; flex-direction:column;
 }
-.main { margin-left:var(--sidebar-w); padding:48px 64px; max-width:960px; }
+.main { flex:1; min-width:0; padding:48px 64px; max-width:960px; }
 
 /* Sidebar */
 .sidebar-header { padding:28px 24px 20px; border-bottom:1px solid var(--border); }
@@ -211,51 +211,51 @@ tr:hover td { background:var(--teal-light); }
 
   <div class="nav-section">
     <div class="nav-section-label">Technical</div>
-    <a class="nav-link" href="#architecture">10 — Architecture (MVP + Prod)</a>
-    <a class="nav-link" href="#mvpscope">11 — MVP Product Scope</a>
-    <a class="nav-link" href="#installation">12 — Installation</a>
-    <a class="nav-link" href="#backend">13 — Backend & Hosting</a>
-    <a class="nav-link" href="#security">14 — Security</a>
-    <a class="nav-link" href="#enforcement">15 — Enforcement Levels</a>
-    <a class="nav-link" href="#techplan">16 — Tech Plan & Languages</a>
-    <a class="nav-link" href="#repostructure">17 — Repo Structure</a>
-    <a class="nav-link" href="#securityarch">18 — Security Architecture</a>
-    <a class="nav-link" href="#database">19 — Database Schema</a>
-    <a class="nav-link" href="#localdev">20 — Local Dev Setup</a>
-    <a class="nav-link" href="#testing">21 — How to Test</a>
-    <a class="nav-link" href="#validation">22 — Validation Checklist</a>
-    <a class="nav-link" href="#deployorder">23 — Deploy Order</a>
-    <a class="nav-link" href="#claudecode">24 — Claude Code Strategy</a>
-    <a class="nav-link" href="#apicontract">25 — API Contract</a>
-    <a class="nav-link" href="#daemonspec">26 — CLI & MCP Spec</a>
-    <a class="nav-link" href="#mcpinterception">27 — MCP Interception</a>
-    <a class="nav-link" href="#policyspec">28 — Policy Rules Spec</a>
-    <a class="nav-link" href="#errorhandling">29 — Error Handling</a>
-    <a class="nav-link" href="#authflow">30 — Auth & SAML</a>
-    <a class="nav-link" href="#budgetreset">31 — Budget Reset</a>
-    <a class="nav-link" href="#npmwrapper">32 — npm Package</a>
-    <a class="nav-link" href="#clicmds">33 — CLI Command Reference</a>
-    <a class="nav-link" href="#mcpedgecases">34 — MCP Edge Cases</a>
-    <a class="nav-link" href="#uiux">35 — UI/UX Guidelines</a>
-    <a class="nav-link" href="#setupchecklist">36 — Setup Checklist</a>
-    <a class="nav-link" href="#aipolicies">37 — AI Policy Creator</a>
-    <a class="nav-link" href="#notifications">37 — Notifications &amp; Support</a>
-    <a class="nav-link" href="#currentstate">38 — Current State (Apr 2026)</a>
-    <a class="nav-link" href="#cicd">39 — CI/CD Pipelines</a>
-    <a class="nav-link" href="#openquestion">40 — The Open Question</a>
-    <a class="nav-link" href="#evaluateapi">41 — /evaluate API</a>
-    <a class="nav-link" href="#awsmonitoring">42 — AWS Monitoring</a>
+    <a class="nav-link" href="#architecture">11 — Architecture (MVP + Prod)</a>
+    <a class="nav-link" href="#mvpscope">12 — MVP Product Scope</a>
+    <a class="nav-link" href="#installation">13 — Installation</a>
+    <a class="nav-link" href="#backend">14 — Backend & Hosting</a>
+    <a class="nav-link" href="#security">15 — Security</a>
+    <a class="nav-link" href="#enforcement">16 — Enforcement Levels</a>
+    <a class="nav-link" href="#techplan">17 — Tech Plan & Languages</a>
+    <a class="nav-link" href="#repostructure">18 — Repo Structure</a>
+    <a class="nav-link" href="#securityarch">19 — Security Architecture</a>
+    <a class="nav-link" href="#database">20 — Database Schema</a>
+    <a class="nav-link" href="#localdev">21 — Local Dev Setup</a>
+    <a class="nav-link" href="#testing">22 — How to Test</a>
+    <a class="nav-link" href="#validation">23 — Validation Checklist</a>
+    <a class="nav-link" href="#deployorder">24 — Deploy Order</a>
+    <a class="nav-link" href="#claudecode">25 — Claude Code Strategy</a>
+    <a class="nav-link" href="#apicontract">26 — API Contract</a>
+    <a class="nav-link" href="#daemonspec">27 — CLI & MCP Spec</a>
+    <a class="nav-link" href="#mcpinterception">28 — MCP Interception</a>
+    <a class="nav-link" href="#policyspec">29 — Policy Rules Spec</a>
+    <a class="nav-link" href="#errorhandling">30 — Error Handling</a>
+    <a class="nav-link" href="#authflow">31 — Auth & SAML</a>
+    <a class="nav-link" href="#budgetreset">32 — Budget Reset</a>
+    <a class="nav-link" href="#npmwrapper">33 — npm Package</a>
+    <a class="nav-link" href="#clicmds">34 — CLI Command Reference</a>
+    <a class="nav-link" href="#mcpedgecases">35 — MCP Edge Cases</a>
+    <a class="nav-link" href="#uiux">36 — UI/UX Guidelines</a>
+    <a class="nav-link" href="#setupchecklist">37 — Setup Checklist</a>
+    <a class="nav-link" href="#aipolicies">38 — AI Policy Creator</a>
+    <a class="nav-link" href="#notifications">39 — Notifications &amp; Support</a>
+    <a class="nav-link" href="#currentstate">40 — Current State (Apr 2026)</a>
+    <a class="nav-link" href="#cicd">41 — CI/CD Pipelines</a>
+    <a class="nav-link" href="#openquestion">42 — The Open Question</a>
+    <a class="nav-link" href="#evaluateapi">43 — /evaluate API</a>
+    <a class="nav-link" href="#awsmonitoring">44 — AWS Monitoring</a>
   </div>
 
   <div class="nav-section">
     <div class="nav-section-label">Business</div>
-    <a class="nav-link" href="#market">43 — Market</a>
-    <a class="nav-link" href="#bizmodel">44 — Business Model</a>
-    <a class="nav-link" href="#gtm">45 — Go-to-Market</a>
-    <a class="nav-link" href="#roadmap">46 — MVP Roadmap</a>
-    <a class="nav-link" href="#founders">47 — Founders</a>
-    <a class="nav-link" href="#buildorder">48 — Build Order</a>
-    <a class="nav-link" href="#ideas">49 — More Ideas</a>
+    <a class="nav-link" href="#market">45 — Market</a>
+    <a class="nav-link" href="#bizmodel">46 — Business Model</a>
+    <a class="nav-link" href="#gtm">47 — Go-to-Market</a>
+    <a class="nav-link" href="#roadmap">48 — MVP Roadmap</a>
+    <a class="nav-link" href="#founders">49 — Founders</a>
+    <a class="nav-link" href="#buildorder">50 — Build Order</a>
+    <a class="nav-link" href="#ideas">51 — More Ideas</a>
   </div>
 
   <div class="sidebar-footer">
@@ -269,7 +269,7 @@ tr:hover td { background:var(--teal-light); }
 
 <!-- 01 VISION -->
 <div class="section" id="vision">
-  <div class="section-tag">01 — Foundation</div>
+  <div class="section-tag">Foundation</div>
   <div class="section-title">The Vision</div>
   <div class="section-intro">
     Troxy is the control layer between AI agents and the real world of payments. 
@@ -325,7 +325,7 @@ tr:hover td { background:var(--teal-light); }
 
 <!-- 02 PROBLEM -->
 <div class="section" id="problem">
-  <div class="section-tag">02 — Foundation</div>
+  <div class="section-tag">Foundation</div>
   <div class="section-title">The Problem</div>
   <div class="section-intro">Three distinct failure modes make AI agent payments dangerous today.</div>
 
@@ -366,7 +366,7 @@ tr:hover td { background:var(--teal-light); }
 
 <!-- 03 SOLUTION -->
 <div class="section" id="solution">
-  <div class="section-tag">03 — Foundation</div>
+  <div class="section-tag">Foundation</div>
   <div class="section-title">The Solution</div>
 
   <p>Troxy intercepts every payment tool call an agent makes, evaluates it against the user's policies, and either passes it through, blocks it, or escalates it to the human for approval. The agent never knows Troxy is in the middle.</p>
@@ -418,7 +418,7 @@ User: approves or declines within 10 min
 
 <!-- 04 NAME -->
 <div class="section" id="name">
-  <div class="section-tag">04 — Foundation</div>
+  <div class="section-tag">Foundation</div>
   <div class="section-title">Name & Brand</div>
 
   <h2>Why Troxy</h2>
@@ -453,7 +453,7 @@ User: approves or declines within 10 min
 
 <!-- 05 AGENTS -->
 <div class="section" id="agents">
-  <div class="section-tag">05 — Product</div>
+  <div class="section-tag">Product</div>
   <div class="section-title">What Are AI Agents</div>
   <div class="section-intro">Understanding the agent landscape is critical for knowing who Troxy's users are and how the product fits in.</div>
 
@@ -526,7 +526,7 @@ and Google Calendar MCP to add it to my calendar."</span>
 
 <!-- THE CORE BET -->
 <div class="section" id="corebet">
-  <div class="section-tag">Foundation — Critical</div>
+  <div class="section-tag">Foundation</div>
   <div class="section-title">The Core Bet</div>
   <div class="section-intro">This is the single sentence that defines what Troxy is and isn't. Everything — architecture, scope, GTM — flows from this.</div>
 
@@ -599,7 +599,7 @@ and Google Calendar MCP to add it to my calendar."</span>
   </div>
 </div>
 <div class="section" id="howworks">
-  <div class="section-tag">06 — Product</div>
+  <div class="section-tag">Product</div>
   <div class="section-title">How Troxy Works</div>
 
   <h2>The Config Patch</h2>
@@ -665,7 +665,7 @@ npx troxy activity            <span class="comment"># last 20 decisions</span></
 
 <!-- 07 FEATURES -->
 <div class="section" id="features">
-  <div class="section-tag">07 — Product</div>
+  <div class="section-tag">Product</div>
   <div class="section-title">Core Features</div>
 
   <div class="grid-2">
@@ -730,7 +730,7 @@ npx troxy activity            <span class="comment"># last 20 decisions</span></
 
 <!-- 08 DASHBOARD -->
 <div class="section" id="dashboard">
-  <div class="section-tag">08 — Product</div>
+  <div class="section-tag">Product</div>
   <div class="section-title">Dashboard UX</div>
 
   <p>The dashboard is Cloudflare-style — clean, information-dense, immediately actionable. Every screen answers one question in under 3 seconds.</p>
@@ -773,7 +773,7 @@ npx troxy activity            <span class="comment"># last 20 decisions</span></
 
 <!-- 09 POLICIES -->
 <div class="section" id="policies">
-  <div class="section-tag">09 — Product</div>
+  <div class="section-tag">Product</div>
   <div class="section-title">Policy Engine</div>
 
   <p>The policy engine is the brain of Troxy. Every transaction is evaluated against a user's rules before being passed, blocked, or escalated.</p>
@@ -820,7 +820,7 @@ THEN [Allow automatically]</pre>
 
 <!-- 10 ARCHITECTURE -->
 <div class="section" id="architecture">
-  <div class="section-tag">10 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Architecture</div>
   <div class="section-intro">As of April 2026 — this reflects what is actually built and running, not an aspirational diagram.</div>
 
@@ -1009,7 +1009,7 @@ THEN [Allow automatically]</pre>
 
 <!-- 11 MVP PRODUCT SCOPE -->
 <div class="section" id="mvpscope">
-  <div class="section-tag">11 — Product</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">MVP Product Scope</div>
   <div class="section-intro">Exactly what the MVP does and what it does not. This is the complete product for the investor demo. Nothing more gets built until we have real user feedback telling us what to build next.</div>
 
@@ -1420,7 +1420,7 @@ POST /dashboard/insights/generate?period=30d&amp;refresh=true
 
 <!-- 12 INSTALLATION -->
 <div class="section" id="installation">
-  <div class="section-tag">11 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Installation & Distribution</div>
 
   <h2>The One-Line Install</h2>
@@ -1505,7 +1505,7 @@ npx troxy init --key txy-...
 
 <!-- 12 BACKEND -->
 <div class="section" id="backend">
-  <div class="section-tag">12 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Backend & Hosting</div>
 
   <div class="callout">
@@ -1559,7 +1559,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 13 SECURITY -->
 <div class="section" id="security">
-  <div class="section-tag">13 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Security</div>
 
   <h2>What Troxy Sees vs. What It Never Sees</h2>
@@ -1637,7 +1637,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 14 ENFORCEMENT -->
 <div class="section" id="enforcement">
-  <div class="section-tag">14 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Enforcement Levels — Where We Are and Where We're Going</div>
 
   <p>The most critical technical question: how do we guarantee agents can't bypass Troxy? Being honest about where we are today and what the path to stronger enforcement looks like.</p>
@@ -1679,7 +1679,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 15 MARKET -->
 <div class="section" id="market">
-  <div class="section-tag">15 — Business</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">Market</div>
 
   <div class="grid-2" style="margin-bottom:24px;">
@@ -1731,7 +1731,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 16 BUSINESS MODEL -->
 <div class="section" id="bizmodel">
-  <div class="section-tag">16 — Business</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">Business Model</div>
 
   <h2>Revenue Streams</h2>
@@ -1796,7 +1796,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 17 GTM -->
 <div class="section" id="gtm">
-  <div class="section-tag">17 — Business</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">Go-to-Market</div>
 
   <h2>Phase 1 — Developer Land Grab (Months 1–6)</h2>
@@ -1844,7 +1844,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- MVP ROADMAP -->
 <div class="section" id="roadmap">
-  <div class="section-tag">MVP — Engineering</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">MVP Roadmap &amp; Status</div>
   <p style="font-size:13px;color:#4a5568;margin-bottom:24px;">Last updated: April 2026. Focus: 100% test before going live, then enforce plan limits.</p>
 
@@ -1887,7 +1887,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 18 FOUNDERS -->
 <div class="section" id="founders">
-  <div class="section-tag">18 — Business</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">The Founding Team</div>
 
   <div class="grid-2">
@@ -1938,7 +1938,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
 
 <!-- 19 BUILD ORDER -->
 <div class="section" id="buildorder">
-  <div class="section-tag">39 — Business</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">Build Order & Checklist</div>
   <div class="section-intro">The exact sequence to build Troxy MVP. Never move to the next step until the current one passes its test. Each step has a clear pass/fail condition — no ambiguity about whether you're done.</div>
 
@@ -2125,7 +2125,7 @@ Rules:
 
 <!-- 20 MORE IDEAS -->
 <div class="section" id="ideas">
-  <div class="section-tag">20 — Ideas & Future</div>
+  <div class="section-tag">Business</div>
   <div class="section-title">More Ideas</div>
   <div class="section-intro">Everything we brainstormed — near-term features, wild future bets, and things that could make Troxy genuinely category-defining. Some of these are V2, some are V5, some might become the whole company.</div>
 
@@ -2314,7 +2314,7 @@ Rules:
 
 <!-- 15 TECH PLAN -->
 <div class="section" id="techplan">
-  <div class="section-tag">15 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Tech Plan, Languages & Architecture</div>
   <div class="section-intro">Two clearly separate architectures: MVP (weeks 1–4, demo to investors, zero real customers) and Prod (post-funding, real customers, real scale). We build MVP first and only add complexity when we actually need it. This is the responsible way to spend investor money.</div>
 
@@ -2444,7 +2444,7 @@ RDS PostgreSQL       ← audit trail, policies, users</pre>
 
 <!-- 16 REPO STRUCTURE -->
 <div class="section" id="repostructure">
-  <div class="section-tag">16 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Repo Structure</div>
   <div class="section-intro">Three repos. Clean separation of concerns. One AWS account to start — troxy-mvp. When we need prod, copy the folder, change the account ID. Terragrunt makes this trivial.</div>
 
@@ -2605,7 +2605,7 @@ jobs:
 
 <!-- 17 SECURITY ARCHITECTURE -->
 <div class="section" id="securityarch">
-  <div class="section-tag">17 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Security Architecture</div>
   <div class="section-intro">Security built into every layer from day one — not bolted on after. Given that Troxy sits between users and their payment methods, this is non-negotiable.</div>
 
@@ -2754,7 +2754,7 @@ jobs:
 
 <!-- DASHBOARD DEPLOYMENT -->
 <div class="section" id="dashboarddeploy">
-  <div class="section-tag">Technical — Infrastructure</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Dashboard Deployment</div>
   <div class="section-intro">How the Next.js dashboard gets from GitHub to dashboard.troxy.io. Everything managed by Terraform and GitHub Actions. No manual steps after initial setup.</div>
 
@@ -2883,7 +2883,7 @@ module.exports = nextConfig
   </div>
 </div>
 <div class="section" id="database">
-  <div class="section-tag">18 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Database Schema</div>
   <div class="section-intro">The core PostgreSQL tables. Designed for auditability — every decision is recorded with full context and is immutable.</div>
 
@@ -2983,7 +2983,7 @@ pending_approvals (
 
 <!-- 19 LOCAL DEV SETUP -->
 <div class="section" id="localdev">
-  <div class="section-tag">19 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Local Dev Setup</div>
   <div class="section-intro">The full Troxy stack running on your laptop in one command. Zero AWS costs during development. No real credit card. No real money. This is how you build and iterate every day.</div>
 
@@ -3093,7 +3093,7 @@ curl -X POST http://localhost:4242/stripe/tools/create_payment \
 
 <!-- 20 TESTING -->
 <div class="section" id="testing">
-  <div class="section-tag">20 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">How to Test</div>
   <div class="section-intro">Three environments, each serving a different purpose. Daily local dev → weekly AWS check → full demo run before every investor meeting.</div>
 
@@ -3141,7 +3141,7 @@ docker-compose logs -f troxy-api</pre>
 
 <!-- 21 VALIDATION -->
 <div class="section" id="validation">
-  <div class="section-tag">21 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Validation Checklist</div>
   <div class="section-intro">How to know Troxy is genuinely working — not just appearing to work. The question you need to answer: is the agent's payment really going through Troxy, or is it going around it?</div>
 
@@ -3241,7 +3241,7 @@ sudo lsof -i :4242
 
 <!-- 22 DEPLOY ORDER -->
 <div class="section" id="deployorder">
-  <div class="section-tag">22 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Deploy Order & Timeline</div>
   <div class="section-intro">4 weeks from zero to investor-demo-ready. Each week has one clear deliverable. If a week slips, the next week still works independently.</div>
 
@@ -3291,7 +3291,7 @@ sudo lsof -i :4242
 
 <!-- 23 CLAUDE CODE STRATEGY -->
 <div class="section" id="claudecode">
-  <div class="section-tag">23 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Claude Code Strategy</div>
   <div class="section-intro">The plan: document everything here first, then hand the full spec to Claude Code and let it build. This document IS the spec. The goal is to save 3–4 weeks of build time without sacrificing understanding of what was built.</div>
 
@@ -3370,7 +3370,7 @@ sudo lsof -i :4242
 
 <!-- 24 API CONTRACT -->
 <div class="section" id="apicontract">
-  <div class="section-tag">24 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">API Contract</div>
   <div class="section-intro">The exact interface between every component. This is what Claude Code needs to build the daemon and the Lambda independently and have them work together on first connection. Every endpoint, every field, every response code — fully specified.</div>
 
@@ -3634,7 +3634,7 @@ DELETE /tokens/:id    ← revoke a token instantly</pre>
 
 <!-- 25 DAEMON SPEC -->
 <div class="section" id="daemonspec">
-  <div class="section-tag">26 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">CLI &amp; MCP Spec (Historical: Daemon Spec)</div>
   <div class="section-intro">Originally designed as a Go daemon binary — that was never built. What was actually built is a Node.js CLI (<code>npx troxy</code>) that patches MCP configs and exposes an MCP server. The spec below describes the original planned daemon architecture for historical reference and future V2 planning. The actual CLI behavior is documented in section 33 (CLI Command Reference).</div>
 
@@ -3744,7 +3744,7 @@ DELETE /tokens/:id    ← revoke a token instantly</pre>
 
 <!-- 26 MCP INTERCEPTION -->
 <div class="section" id="mcpinterception">
-  <div class="section-tag">26 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">MCP Interception Mechanism</div>
   <div class="section-intro">This is the core of the product. How does Troxy get between Claude and Stripe without the agent knowing? The answer: we rewrite the MCP config file to point at the daemon instead of the real MCP server. The agent never knows the difference.</div>
 
@@ -3871,7 +3871,7 @@ var merchantCategories = map[string]string{
 
 <!-- 27 POLICY RULES SPEC -->
 <div class="section" id="policyspec">
-  <div class="section-tag">27 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Policy Rules Spec</div>
   <div class="section-intro">The exact structure of a policy rule, how evaluation works, what operators exist, and the precise logic the Lambda implements. This is what Claude Code needs to build the evaluation engine correctly.</div>
 
@@ -4029,7 +4029,7 @@ var merchantCategories = map[string]string{
 
 <!-- AI POLICY CREATOR -->
 <div class="section" id="aipolicies">
-  <div class="section-tag">Product — Future</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">AI Policy Creator</div>
   <div class="section-intro">Instead of building policies with dropdowns, the user types in plain English what they want — and Claude converts it to a structured policy automatically. This is a V2 feature, but it's already planned and the architecture supports it.</div>
 
@@ -4113,7 +4113,7 @@ Return ONLY valid JSON matching this schema:
 
 <!-- 28 ERROR HANDLING -->
 <div class="section" id="errorhandling">
-  <div class="section-tag">28 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Error Handling</div>
   <div class="section-intro">What happens when things go wrong. Every failure mode, what each component does, and what the user sees. Specified so the product degrades gracefully instead of silently breaking.</div>
 
@@ -4200,7 +4200,7 @@ View your full activity log: https://dash.troxy.io/activity
 <hr class="divider">
 
 <div class="section" id="authflow">
-  <div class="section-tag">Spec — Gap Fill</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">User Auth, API Keys & Onboarding Flow</div>
   <div class="section-intro">How a user creates an account, generates an API key, and connects their machine. The API key is the core of everything — it's how the daemon authenticates, and how users control access.</div>
 
@@ -4328,7 +4328,7 @@ PATCH /tokens/:id              ← rename API key (JWT required)</pre>
 </div>
 
 <hr class="divider">
-  <div class="section-tag">Spec — Gap Fill</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Budget Reset Mechanism</div>
   <div class="section-intro">How monthly budget envelopes reset to zero on the 1st of every month. Needs to be explicit so Claude Code builds it and doesn't leave it as a silent bug.</div>
 
@@ -4374,7 +4374,7 @@ resource "aws_lambda_permission" "eventbridge_budget" {
 <hr class="divider">
 
 <div class="section" id="npmwrapper">
-  <div class="section-tag">Spec — Gap Fill</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">npm Package & Install Script</div>
   <div class="section-intro">Exactly what the npm package contains and what runs when someone does <code>npx troxy init</code>. Claude Code needs this to build the install experience.</div>
 
@@ -4424,7 +4424,7 @@ resource "aws_lambda_permission" "eventbridge_budget" {
 <hr class="divider">
 
 <div class="section" id="mcpedgecases">
-  <div class="section-tag">Spec — Gap Fill</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">MCP Config Edge Cases</div>
   <div class="section-intro">What the daemon does when MCP config files don't exist, are malformed, or have unexpected content. These scenarios will happen with real users.</div>
 
@@ -4461,7 +4461,7 @@ var paymentMCPServers = []string{
 <hr class="divider">
 
 <div class="section" id="uiux">
-  <div class="section-tag">Spec — Design</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">UI/UX Guidelines</div>
   <div class="section-intro">The visual style and design principles for the dashboard and all Troxy interfaces. No need for a professional design system yet — but Claude Code needs clear direction so it doesn't build something generic. The reference is this document itself.</div>
 
@@ -4574,7 +4574,7 @@ code, pre, .mono {
 
 <!-- MASTER SETUP CHECKLIST -->
 <div class="section" id="setupchecklist">
-  <div class="section-tag">Setup — Complete Reference</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Master Setup Checklist</div>
   <div class="section-intro">Everything that needs to exist before writing a single line of code. Every item has a clear pass/fail check — no ambiguity. Green = done, move on. Red = not done, fix before continuing.</div>
 
@@ -4731,7 +4731,7 @@ code, pre, .mono {
 
 <!-- NOTIFICATIONS & SUPPORT -->
 <div class="section" id="notifications">
-  <div class="section-tag">Operations</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Notifications &amp; Support</div>
   <div class="section-intro">How to push changelog updates to users, how support conversations work, and what the notification bell system shows.</div>
 
@@ -4784,7 +4784,7 @@ code, pre, .mono {
 
 <!-- 37 CURRENT STATE -->
 <div class="section" id="currentstate">
-  <div class="section-tag">38 — Current State</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">Current State — April 2026</div>
   <div class="section-intro">What is actually built, live, and working as of April 2026. Updated as things ship.</div>
 
@@ -4833,7 +4833,7 @@ code, pre, .mono {
 
 <!-- 38 CI/CD -->
 <div class="section" id="cicd">
-  <div class="section-tag">39 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">CI/CD Pipelines</div>
 
   <h2>troxy-tf-live — Targeted Terragrunt</h2>
@@ -4913,7 +4913,7 @@ git checkout main && git merge dev && git push
 
 <!-- 40 OPEN QUESTION -->
 <div class="section" id="openquestion">
-  <div class="section-tag">40 — Strategic</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">The Open Question — Real Payment Enforcement</div>
   <div class="section-intro">The most important strategic question for Troxy's future. Being honest about what we built, what we haven't, and what it means.</div>
 
@@ -4996,7 +4996,7 @@ git checkout main && git merge dev && git push
 
 <!-- 41 CLI REFERENCE -->
 <div class="section" id="clicmds">
-  <div class="section-tag">33 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">CLI Command Reference</div>
   <div class="section-intro">Full reference for <code>npx troxy</code>. Works on Mac, Linux, and Windows. Requires Node.js 18+.</div>
 
@@ -5085,7 +5085,7 @@ git checkout main && git merge dev && git push
 
 <!-- 41 EVALUATE API -->
 <div class="section" id="evaluateapi">
-  <div class="section-tag">41 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">/evaluate API</div>
   <div class="section-intro">The core endpoint called by agents (via MCP or directly). Authenticated with <code>X-Troxy-Key</code> header, not a JWT.</div>
 
@@ -5145,7 +5145,7 @@ aws ssm start-session --target i-06b1487112b33923b --region us-east-1</code></pr
 
 <!-- 42 AWS MONITORING -->
 <div class="section" id="awsmonitoring">
-  <div class="section-tag">42 — Technical</div>
+  <div class="section-tag">Technical</div>
   <div class="section-title">AWS Monitoring</div>
   <div class="section-intro">All production alerts go to <strong>gaslan@troxy.io</strong>. Managed via Terraform — do not create alarms manually in the console.</div>
 
