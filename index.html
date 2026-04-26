@@ -643,14 +643,29 @@ and Google Calendar MCP to add it to my calendar."</span>
   </div>
 
   <h2>How the CLI Works</h2>
-  <p>Troxy is a Node.js CLI published to npm. <code>npx troxy init</code> patches the MCP config files for Claude Desktop, Cursor, and Windsurf to add an <code>evaluate_payment</code> tool entry. The agent client starts the Troxy MCP server process automatically when it launches. There is no separate background daemon.</p>
+  <p>Troxy is a Node.js CLI published to npm. <code>npx troxy-cli init --key txy-...</code> does two things: (1) patches the MCP config files for Claude Desktop, Cursor, and Windsurf to add an <code>evaluate_payment</code> tool entry, and (2) saves the API key to <code>~/.troxy/config.json</code>. After that, no <code>--key</code> flag is ever needed again — all commands use the saved key automatically.</p>
 
-  <pre><code><span class="comment"># CLI commands:</span>
-npx troxy init --key txy-...  <span class="comment"># patch MCP configs, save API key</span>
-npx troxy status              <span class="comment"># check API connectivity</span>
-npx troxy cards list          <span class="comment"># view card aliases</span>
-npx troxy policies list       <span class="comment"># view active rules</span>
-npx troxy activity            <span class="comment"># last 20 decisions</span></code></pre>
+  <p>The agent client starts the Troxy MCP server process automatically when it launches. There is no separate background daemon.</p>
+
+  <h3>Key resolution order</h3>
+  <p>Every CLI command resolves the API key in this order: <code>--key</code> flag → <code>TROXY_API_KEY</code> env var → <code>~/.troxy/config.json</code>. The <code>troxy status</code> command shows which source is in use.</p>
+
+  <h3>Key expiry</h3>
+  <p>Keys can be created with an optional expiry (30 days, 90 days, 1 year, or never). An expired key is rejected at the <code>/evaluate</code> endpoint exactly like a revoked key. If no expiry is set, the key lives until explicitly revoked from the dashboard. "Never" is the recommended default for MCP connections — the user sets it up once and forgets it.</p>
+
+  <h3>Revocation</h3>
+  <p>If a saved key is revoked, the CLI shows a targeted error: <em>"Your saved key is no longer accepted. Run <code>npx troxy-cli init --key &lt;new-key&gt;</code> to reconnect."</em> — rather than a generic auth failure. The user goes to the dashboard, generates a new key, and runs <code>init</code> once more.</p>
+
+  <pre><code><span class="comment"># One-time setup on a new machine:</span>
+npx troxy-cli init --key txy-...  <span class="comment"># saves key, patches MCP configs</span>
+
+<span class="comment"># From then on — no --key needed:</span>
+troxy status           <span class="comment"># API health + which key is in use (saved / env / flag)</span>
+troxy policies list    <span class="comment"># all rules with scope + conditions</span>
+troxy cards list       <span class="comment"># card aliases with budget usage</span>
+troxy mcps list        <span class="comment"># all MCP connections + last seen</span>
+troxy activity         <span class="comment"># last 20 decisions</span>
+troxy insights         <span class="comment"># 30-day spend summary</span></code></pre>
 
   <h2>Card Aliases — The Real Number Stays Hidden</h2>
   <p>Users never see card numbers in Troxy. They create aliases that map to real cards stored with their payment provider:</p>
