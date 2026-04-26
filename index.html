@@ -672,7 +672,6 @@ troxy init --key txy-...      <span class="comment"># save key + patch MCP confi
 <span class="comment"># From then on — no --key needed:</span>
 troxy status           <span class="comment"># API health + which key is in use</span>
 troxy policies list    <span class="comment"># all rules with scope + conditions</span>
-troxy cards list       <span class="comment"># card aliases with budget usage</span>
 troxy mcps list        <span class="comment"># all MCP connections + last seen</span>
 troxy activity         <span class="comment"># last 20 decisions</span>
 troxy insights         <span class="comment"># 30-day spend summary</span></code></pre>
@@ -5013,17 +5012,6 @@ git checkout main && git merge dev && git push
 
 <span class="comment"># Check API health</span>
 <span class="teal">npx troxy status</span></code></pre>
-
-  <h2>Card Commands</h2>
-  <pre><code><span class="comment"># List all cards</span>
-<span class="teal">npx troxy cards list</span>
-
-<span class="comment"># Create a card alias</span>
-<span class="teal">npx troxy cards create --name "Personal" --budget 500</span>
-<span class="teal">npx troxy cards create --name "Business" --budget 2000 --provider stripe</span>
-
-<span class="comment"># Delete a card alias</span>
-<span class="teal">npx troxy cards delete --name "Personal"</span></code></pre>
 
   <h2>Policy Commands</h2>
   <pre><code><span class="comment"># List all policies</span>
