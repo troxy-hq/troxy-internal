@@ -1423,7 +1423,7 @@ POST /dashboard/insights/generate?period=30d&amp;refresh=true
   <div class="card">
     <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;">User's external agent (Claude Desktop, Cursor, custom)
               ↓  calls evaluate_payment MCP tool
-         Troxy MCP server (npx troxy serve)     ← we build this
+         Troxy MCP server (npx troxy mcp)     ← we build this
               ↓  HTTP POST /evaluate
          Troxy API (api.troxy.io)               ← we build this
               ↓  returns ALLOW / BLOCK / ESCALATE
@@ -1523,7 +1523,7 @@ services:
 npx troxy init --key txy-...
 <span class="comment"># → writes ~/.troxy/config.json
 # → patches ~/.cursor/mcp.json + Claude Desktop config
-# → adds "troxy" MCP server entry pointing to npx troxy serve
+# → adds "troxy" MCP server entry pointing to npx troxy mcp
 # Agent client starts Troxy MCP server on next restart</span></code></pre>
 </div>
 
@@ -1542,7 +1542,7 @@ npx troxy init --key txy-...
   <h2>How a Transaction Flows</h2>
   <pre><code>Agent (Claude Desktop / Cursor / Windsurf)
     ↓  calls evaluate_payment MCP tool
-Troxy MCP server (npx troxy serve, launched by agent client)
+Troxy MCP server (npx troxy mcp, launched by agent client)
     ↓  HTTP POST
 api.troxy.io (Cloudflare → API Gateway)
     ↓
