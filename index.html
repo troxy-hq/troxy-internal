@@ -655,22 +655,22 @@ and Google Calendar MCP to add it to my calendar."</span>
   <p>After either <code>connect</code> or <code>init</code>, no <code>--key</code> flag is ever needed again — all commands use the saved key automatically.</p>
 
   <h3>Key resolution order</h3>
-  <p>Every CLI command resolves the API key in this order: <code>--key</code> flag → <code>TROXY_API_KEY</code> env var → <code>~/.troxy/config.json</code>. The <code>troxy status</code> command shows which source is in use.</p>
+  <p><strong>Two auth modes:</strong> <code>troxy init</code> and <code>troxy pay</code> use an API key (resolved from: <code>--key</code> flag → <code>TROXY_API_KEY</code> env → <code>~/.troxy/config.json</code>). All inspection/management commands (<code>activity</code>, <code>mcps</code>, <code>policies</code>, <code>insights</code>) use a 12-hour JWT session from <code>troxy login</code>.</p>
 
   <h3>Key expiry</h3>
   <p>Keys can be created with an optional expiry (30 days, 90 days, 1 year, or never). An expired key is rejected at the <code>/evaluate</code> endpoint exactly like a revoked key. If no expiry is set, the key lives until explicitly revoked from the dashboard. "Never" is the recommended default for MCP connections — the user sets it up once and forgets it.</p>
 
   <h3>Revocation</h3>
-  <p>If a saved key is revoked, the CLI shows a targeted error: <em>"Your saved key is no longer accepted. Run <code>troxy connect --key &lt;new-key&gt;</code> to reconnect."</em> — rather than a generic auth failure.</p>
+  <p>If a saved key is revoked, the CLI shows a targeted error: <em>"Your saved key is no longer accepted. Run <code>troxy init --key &lt;new-key&gt;</code> to reconnect."</em> — rather than a generic auth failure.</p>
 
-  <pre><code><span class="comment"># CLI-only access (humans):</span>
-troxy connect --key txy-...   <span class="comment"># save key, no MCP setup</span>
+  <pre><code><span class="comment"># MCP agent setup (AI on a machine — one time):</span>
+troxy init --key txy-...      <span class="comment"># validate key + patch MCP configs</span>
 
-<span class="comment"># Full agent setup (AI on a machine):</span>
-troxy init --key txy-...      <span class="comment"># save key + patch MCP configs</span>
+<span class="comment"># CLI session for humans (12-hour, device-code flow):</span>
+troxy login                   <span class="comment"># opens browser → copy code → paste into terminal</span>
 
-<span class="comment"># From then on — no --key needed:</span>
-troxy status           <span class="comment"># API health + which key is in use</span>
+<span class="comment"># From then on — inspection commands use login session:</span>
+troxy status           <span class="comment"># API health + account overview</span>
 troxy policies list    <span class="comment"># all rules with scope + conditions</span>
 troxy mcps list        <span class="comment"># all MCP connections + last seen</span>
 troxy activity         <span class="comment"># last 20 decisions</span>
@@ -788,7 +788,7 @@ troxy insights         <span class="comment"># 30-day spend summary</span></code
     <tr><th>Component</th><th>Technology</th><th>Why</th></tr>
     <tr><td>Framework</td><td>Single <code>index.html</code></td><td>No framework, no build step. Pure HTML/CSS/JS. All data fetching client-side via fetch().</td></tr>
     <tr><td>Hosting</td><td>Cloudflare Pages</td><td>Free tier, auto-deploys on push, preview URLs on PRs, all DNS via Cloudflare</td></tr>
-    <tr><td>Auth</td><td>Magic link (AWS SES)</td><td>Email-based passwordless auth. No OAuth dependency.</td></tr>
+    <tr><td>Auth</td><td>Device-code flow (AWS SES)</td><td>Browser opens → login page shows a code → user pastes it into terminal. No OAuth dependency. Dashboard also uses magic-link for direct login.</td></tr>
     <tr><td>Real-time</td><td>Polling (30s interval)</td><td>Dashboard polls API every 30 seconds. No WebSocket needed at MVP scale.</td></tr>
     <tr><td>Domain (prod)</td><td><code>dash.troxy.io</code></td><td>Auto-deploys from <code>main</code> branch of troxy-dashboard repo</td></tr>
     <tr><td>Domain (staging)</td><td><code>dev.dash.troxy.io</code></td><td>Auto-deploys from <code>dev</code> branch of troxy-dashboard repo</td></tr>
@@ -1103,18 +1103,18 @@ THEN [Allow automatically]</pre>
 
   <h2>The 5-minute user journey — from install to first blocked payment</h2>
   <div class="card">
-    <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:2;overflow-x:auto;"><span style="color:#68d391;">Minute 0:</span> Open browser → dash.troxy.io → sign up with email magic link
+    <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:2;overflow-x:auto;"><span style="color:#68d391;">Minute 0:</span> Open browser → dash.troxy.io → sign up
            → Create API token ("My MacBook") → copy txy-...
 
 <span style="color:#68d391;">Minute 1:</span> Run: npx troxy init --key txy-...
            → MCP configs patched for Claude Desktop / Cursor
            → "✅ Troxy configured. Restart your agent client."
 
-<span style="color:#68d391;">Minute 2:</span> Add a card alias
-           → Name: "Main Card", Last 4: 1234, Budget: $500/mo
-           → Click save
+<span style="color:#68d391;">Minute 1.5:</span> Run: troxy login
+           → Browser opens → log in → copy code → paste into terminal
+           → CLI session active for 12 hours
 
-<span style="color:#68d391;">Minute 3:</span> Create a policy
+<span style="color:#68d391;">Minute 2:</span> Create a policy
            → "Block Electronics" — category: electronics → BLOCK
            → Priority 10, save
 
