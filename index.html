@@ -33,7 +33,7 @@ body { font-family:'DM Sans',sans-serif; font-weight:300; background:var(--bg); 
   overflow-y:auto; z-index:100;
   display:flex; flex-direction:column;
 }
-.main { margin-left:var(--sidebar-w); padding:48px 64px; max-width:960px; }
+.main { margin-left:var(--sidebar-w); padding:48px 64px; max-width:900px; }
 
 /* Sidebar */
 .sidebar-header { padding:28px 24px 20px; border-bottom:1px solid var(--border); }
@@ -788,7 +788,7 @@ troxy insights         <span class="comment"># 30-day spend summary</span></code
     <tr><th>Component</th><th>Technology</th><th>Why</th></tr>
     <tr><td>Framework</td><td>Single <code>index.html</code></td><td>No framework, no build step. Pure HTML/CSS/JS. All data fetching client-side via fetch().</td></tr>
     <tr><td>Hosting</td><td>Cloudflare Pages</td><td>Free tier, auto-deploys on push, preview URLs on PRs, all DNS via Cloudflare</td></tr>
-    <tr><td>Auth</td><td>Device-code flow (AWS SES)</td><td>Browser opens → login page shows a code → user pastes it into terminal. No OAuth dependency. Dashboard also uses magic-link for direct login.</td></tr>
+    <tr><td>Auth</td><td>Device-code flow (AWS SES)</td><td>Browser opens → login page shows a code → user pastes it into terminal. No OAuth dependency. Dashboard uses passwordless email sign-in for direct login.</td></tr>
     <tr><td>Real-time</td><td>Polling (30s interval)</td><td>Dashboard polls API every 30 seconds. No WebSocket needed at MVP scale.</td></tr>
     <tr><td>Domain (prod)</td><td><code>dash.troxy.io</code></td><td>Auto-deploys from <code>main</code> branch of troxy-dashboard repo</td></tr>
     <tr><td>Domain (staging)</td><td><code>dev.dash.troxy.io</code></td><td>Auto-deploys from <code>dev</code> branch of troxy-dashboard repo</td></tr>
@@ -917,7 +917,7 @@ THEN [Allow automatically]</pre>
     <!-- SES -->
     <rect x="430" y="158" width="150" height="50" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
     <text x="505" y="177" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="10" font-weight="600" fill="#15803d">AWS SES</text>
-    <text x="505" y="191" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Magic links + approval emails</text>
+    <text x="505" y="191" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#64748b">Email sign-in + approval emails</text>
     <text x="505" y="203" font-family="DM Sans,system-ui,sans-serif" text-anchor="middle" font-size="9" fill="#d97706">⏳ production access pending</text>
     <!-- EventBridge -->
     <rect x="430" y="222" width="150" height="44" rx="6" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
@@ -1505,7 +1505,7 @@ services:
     <h3 style="margin-top:0">Signup flow</h3>
     <ol style="font-size:13px; color:#4a5568; padding-left:20px;">
       <li style="margin-bottom:6px;">User runs <code>npx troxy init --key txy-...</code></li>
-      <li style="margin-bottom:6px;">If no key yet: browser opens to <code>dash.troxy.io</code> — sign up with email magic link</li>
+      <li style="margin-bottom:6px;">If no key yet: browser opens to <code>dash.troxy.io</code> — sign up with passwordless email sign-in</li>
       <li style="margin-bottom:6px;">Generate API key in dashboard: <code>txy-xk29dj8f...</code></li>
       <li style="margin-bottom:6px;">Run <code>npx troxy init --key txy-xk29dj8f...</code> — patches MCP configs</li>
       <li style="margin-bottom:6px;">Restart Claude Desktop / Cursor — Troxy MCP server loads</li>
@@ -1569,7 +1569,7 @@ AWS SES → approval email to user (one-click approve/decline links, 10-min expi
     <tr><td>Dashboard (staging)</td><td>Cloudflare Pages — <code>dev.dash.troxy.io</code></td><td>dev branch auto-deploy</td></tr>
     <tr><td>Marketing site</td><td>Cloudflare Pages — <code>troxy.io</code></td><td></td></tr>
     <tr><td>Internal KB</td><td>Cloudflare Pages — <code>internal.troxy.io</code></td><td>This site</td></tr>
-    <tr><td>Email</td><td>AWS SES</td><td>Magic links + approval emails. Sandbox mode — production pending.</td></tr>
+    <tr><td>Email</td><td>AWS SES</td><td>Email sign-in codes + approval emails. Sandbox mode — production pending.</td></tr>
     <tr><td>Secrets</td><td>AWS Secrets Manager</td><td>DB password + app secrets</td></tr>
     <tr><td>Budget reset cron</td><td>AWS EventBridge</td><td>Daily cron resets budget_used</td></tr>
     <tr><td>DNS (all domains)</td><td>Cloudflare</td><td>Never Route53 or ACM</td></tr>
@@ -2057,7 +2057,7 @@ Rules:
         <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Spec sections</th>
         <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">✅ Pass condition</th>
       </tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;color:var(--teal);">11</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Auth flow (magic link)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>Section 30 — Auth & SAML</code></td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Go to dashboard.troxy.io → enter email → magic link email arrives → click → logged in → JWT in browser</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;color:var(--teal);">11</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Auth flow (passwordless email)</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>Section 30 — Auth & SAML</code></td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Go to dashboard.troxy.io → enter email → sign-in code arrives → enter code → logged in → JWT in browser</td></tr>
       <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:700;color:var(--teal);">12</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Dashboard 5 pages</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);"><code>Section 11, 34</code></td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Each page loads real data from api.troxy.io — Overview, Policies, Activity, Cards, Insights V1</td></tr>
       <tr><td style="padding:9px 12px;font-weight:700;color:var(--teal);">13</td><td style="padding:9px 12px;font-weight:500;">GitHub Actions deploy pipeline</td><td style="padding:9px 12px;"><code>Dashboard Deploy section</code></td><td style="padding:9px 12px;">Push to main → GitHub Actions runs → dashboard.troxy.io updates in under 2 minutes</td></tr>
     </table>
@@ -2918,7 +2918,7 @@ module.exports = nextConfig
 users (
   id            UUID PRIMARY KEY,
   email         TEXT UNIQUE NOT NULL,
-  password_hash TEXT,            <span style="color:#64748b;">-- bcrypt(password, cost=12). NULL if magic-link only</span>
+  password_hash TEXT,            <span style="color:#64748b;">-- bcrypt(password, cost=12). NULL if passwordless only</span>
   verified_at   TIMESTAMPTZ,     <span style="color:#64748b;">-- NULL = email not yet verified</span>
   created_at    TIMESTAMPTZ DEFAULT now()
 )
@@ -4301,7 +4301,7 @@ npx troxy init --key txy-k8mN2pQxR7vL9wJ4nF6hD3cA1bE5gI0z</pre>
 
   <h2>Auth endpoints</h2>
   <div class="card">
-    <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;">POST /auth/magic-link          ← send magic link (no auth required)
+    <pre style="background:#1a2235;color:#e2e8f0;padding:16px;border-radius:8px;font-size:12px;line-height:1.8;overflow-x:auto;">POST /auth/magic-link          ← send sign-in code (no auth required)
 POST /auth/verify              ← verify token, return JWT (no auth required)
 GET  /auth/me                  ← return current user info (JWT required)
 
@@ -4315,7 +4315,7 @@ PATCH /tokens/:id              ← rename API key (JWT required)</pre>
   <div class="card">
     <table style="width:100%;border-collapse:collapse;font-size:13px;">
       <tr style="background:var(--bg);"><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Method</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">When</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Why</th><th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;text-transform:uppercase;">Effort</th></tr>
-      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Magic link</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--green-fg);font-weight:500;">MVP ✅</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Simple, secure, no passwords</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Done</td></tr>
+      <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Passwordless email</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);color:var(--green-fg);font-weight:500;">MVP ✅</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Simple, secure, no passwords</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Done</td></tr>
       <tr><td style="padding:9px 12px;border-bottom:1px solid var(--border);font-weight:500;">Google OAuth</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">V2</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">Most users want "Sign in with Google"</td><td style="padding:9px 12px;border-bottom:1px solid var(--border);">~2 days</td></tr>
       <tr><td style="padding:9px 12px;">SAML / SSO</td><td style="padding:9px 12px;">V3 — first enterprise customer</td><td style="padding:9px 12px;">Okta, Azure AD, Google Workspace</td><td style="padding:9px 12px;">~1–2 weeks</td></tr>
     </table>
