@@ -650,6 +650,8 @@ and Google Calendar MCP to add it to my calendar."</span>
     <tr><td><code>troxy connect --key txy-...</code></td><td>Saves the API key to <code>~/.troxy/config.json</code>. Nothing else.</td><td>Humans who want CLI access only</td></tr>
     <tr><td><code>troxy init --key txy-...</code></td><td>Saves the key <strong>and</strong> patches MCP configs for Claude Desktop, Cursor, Windsurf — so the AI agent routes payments through Troxy.</td><td>Setting up an AI agent on a machine</td></tr>
     <tr><td><code>troxy uninstall</code></td><td>Removes Troxy from the MCP configs. Key file is left intact.</td><td>Offboarding / cleanup</td></tr>
+    <tr><td><code>troxy pause</code></td><td>Pauses this MCP server-side — all <code>evaluate_payment</code> calls return BLOCK until resumed. Key stays active; no config changes needed.</td><td>Temporarily stopping an agent from spending</td></tr>
+    <tr><td><code>troxy resume</code></td><td>Resumes a paused MCP. Payments evaluate normally again.</td><td>Re-enabling after a pause</td></tr>
   </table>
 
   <p>After either <code>connect</code> or <code>init</code>, no <code>--key</code> flag is ever needed again — all commands use the saved key automatically.</p>
