@@ -657,7 +657,7 @@ and Google Calendar MCP to add it to my calendar."</span>
   <p>After either <code>connect</code> or <code>init</code>, no <code>--key</code> flag is ever needed again — all commands use the saved key automatically.</p>
 
   <h3>Key resolution order</h3>
-  <p><strong>Two auth modes:</strong> <code>troxy init</code> and <code>troxy pay</code> use an API key (resolved from: <code>--key</code> flag → <code>TROXY_API_KEY</code> env → <code>~/.troxy/config.json</code>). All inspection/management commands (<code>activity</code>, <code>mcps</code>, <code>policies</code>, <code>insights</code>) use a 12-hour JWT session from <code>troxy login</code>.</p>
+  <p><strong>Two auth modes:</strong> The API key is used only by <code>troxy init</code> (setup) and the background MCP server process (heartbeat, evaluate). Everything a human runs — pause, resume, rename, pay, policies, activity, insights — requires a 12-hour JWT session from <code>troxy login</code>. <code>troxy status</code> works with no auth at all.</p>
 
   <h3>Key expiry</h3>
   <p>Keys can be created with an optional expiry (30 days, 90 days, 1 year, or never). An expired key is rejected at the <code>/evaluate</code> endpoint exactly like a revoked key. If no expiry is set, the key lives until explicitly revoked from the dashboard. "Never" is the recommended default for MCP connections — the user sets it up once and forgets it.</p>
@@ -4315,10 +4315,14 @@ POST /tokens                   ← create new API key (JWT required) → returns
 DELETE /tokens/:id             ← revoke API key (JWT required)
 PATCH /tokens/:id              ← rename API key (JWT required)
 
-PATCH /mcp/name                ← rename this MCP (API key — no login needed)
-GET   /mcp/status              ← paused state + last seen (API key)
-POST  /mcp/pause               ← pause this MCP (API key)
-POST  /mcp/resume              ← resume this MCP (API key)</pre>
+GET   /mcp/status              ← paused state + last seen (API key — no login needed)
+PATCH /mcp/name                ← rename this MCP (API key — daemon use)
+POST  /mcp/pause               ← pause this MCP (API key — daemon use)
+POST  /mcp/resume              ← resume this MCP (API key — daemon use)
+
+POST  /tokens/:id/pause        ← pause MCP by ID (JWT — CLI use)
+POST  /tokens/:id/resume       ← resume MCP by ID (JWT — CLI use)
+PATCH /tokens/:id/name         ← rename MCP by ID (JWT — CLI + dashboard)</pre>
   </div>
 
   <h2>Auth roadmap</h2>
