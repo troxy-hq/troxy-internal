@@ -672,11 +672,14 @@ troxy init --key txy-...      <span class="comment"># validate key + patch MCP c
 troxy login                   <span class="comment"># opens browser → copy code → paste into terminal</span>
 
 <span class="comment"># From then on — inspection commands use login session:</span>
-troxy status           <span class="comment"># API health + account overview</span>
-troxy policies list    <span class="comment"># all rules with scope + conditions</span>
-troxy mcps list        <span class="comment"># all MCP connections + last seen</span>
-troxy activity         <span class="comment"># last 20 decisions</span>
-troxy insights         <span class="comment"># 30-day spend summary</span></code></pre>
+troxy status                       <span class="comment"># API health + account overview + MCP paused state</span>
+troxy policies list                <span class="comment"># all rules with scope + conditions</span>
+troxy mcps list                    <span class="comment"># all MCP connections + last seen</span>
+troxy mcps rename --name "new"     <span class="comment"># rename this machine's MCP (API key — no login needed)</span>
+troxy pause                        <span class="comment"># pause this MCP (all evaluations blocked)</span>
+troxy resume                       <span class="comment"># resume this MCP</span>
+troxy activity                     <span class="comment"># last 20 decisions</span>
+troxy insights                     <span class="comment"># 30-day spend summary</span></code></pre>
 
   <h2>Card Aliases — The Real Number Stays Hidden</h2>
   <p>Users never see card numbers in Troxy. They create aliases that map to real cards stored with their payment provider:</p>
@@ -4310,7 +4313,12 @@ GET  /auth/me                  ← return current user info (JWT required)
 GET  /tokens                   ← list all API keys (JWT required)
 POST /tokens                   ← create new API key (JWT required) → returns full key ONCE
 DELETE /tokens/:id             ← revoke API key (JWT required)
-PATCH /tokens/:id              ← rename API key (JWT required)</pre>
+PATCH /tokens/:id              ← rename API key (JWT required)
+
+PATCH /mcp/name                ← rename this MCP (API key — no login needed)
+GET   /mcp/status              ← paused state + last seen (API key)
+POST  /mcp/pause               ← pause this MCP (API key)
+POST  /mcp/resume              ← resume this MCP (API key)</pre>
   </div>
 
   <h2>Auth roadmap</h2>
